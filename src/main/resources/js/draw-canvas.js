@@ -109,7 +109,7 @@ function findxy(res, e) {
 function connect() {
     var socket = new SockJS('/points');
     stompClient = Stomp.over(socket);
-    stompClient.connect({}, function (frame) {
+    stompClient.connect('guest', 'guest', function (frame) {
 
         console.log('Connected: ' + frame);
         stompClient.subscribe('/topic/points', function (points) {
