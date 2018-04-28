@@ -1,10 +1,12 @@
 package com.example.shareddrawingboard;
 
 
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -34,10 +36,13 @@ public class ChatController {
         return "board";
     }
 
-    @MessageMapping("/points")
-    @SendTo("/topic/points")
-    public Points getPoint(Points points){
+    @MessageMapping("/points/{url}")
+    @SendTo("/topic/points.{url}")
+    public Points getPoint(@DestinationVariable String url,  Points points) {
+        System.out.println(url);
         return points;
     }
+
+
 
 }

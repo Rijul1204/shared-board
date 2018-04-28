@@ -23,7 +23,7 @@ function sendData() {
 
     var payload = JSON.stringify({points: currPoints});
 
-    stompClient.send("/app/points", {}, payload);
+    stompClient.send("/app/points/test", {}, payload);
 
     currPoints = [];
 };
@@ -112,7 +112,7 @@ function connect() {
     stompClient.connect({}, function (frame) {
 
         console.log('Connected: ' + frame);
-        stompClient.subscribe('/topic/points', function (points) {
+        stompClient.subscribe('/topic/points.test', function (points) {
 
             var obj = JSON.parse(points.body);
 
