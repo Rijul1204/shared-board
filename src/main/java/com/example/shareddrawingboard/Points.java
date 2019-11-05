@@ -4,14 +4,24 @@ import java.util.List;
 
 public class Points {
 
+    String chatRoomId;
     List<Point> points;
 
-    public Points(List<Point> points) {
+    public Points(String chatRoomId, List<Point> points) {
+        this.chatRoomId = chatRoomId;
         this.points = points;
     }
 
     public Points() {
 
+    }
+
+    public String getChatRoomId() {
+        return chatRoomId;
+    }
+
+    public void setChatRoomId(String chatRoomId) {
+        this.chatRoomId = chatRoomId;
     }
 
     public List<Point> getPoints() {
@@ -21,7 +31,8 @@ public class Points {
     @Override
     public String toString() {
         return "Points{" +
-                "points=" + points +
+                "chatRoomId='" + chatRoomId + '\'' +
+                ", points=" + points +
                 '}';
     }
 

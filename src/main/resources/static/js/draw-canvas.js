@@ -4,6 +4,8 @@ var currPoints = [];
 
 var w, h;
 
+var chatRoomId;
+
 var canvas, context, flag = false,
     prevX = 0,
     currX = 0,
@@ -19,18 +21,15 @@ function addClick(px, py, x, y) {
     currPoints.push({'prevX': px, 'prevY': py, 'x': x, 'y': y});
 };
 
-function sendData() {
-
-    var payload = JSON.stringify({points: currPoints});
-
-    stompClient.send("/app/points/test", {}, payload);
-
-    currPoints = [];
-};
 
 $(document).ready(function () {
 
     connect();
+
+    setUpCanvas();
+});
+
+function setUpCanvas() {
 
     canvas = document.getElementById('canvas');
 
@@ -50,7 +49,7 @@ $(document).ready(function () {
     canvas.addEventListener("mouseout", function (e) {
         findxy('out', e)
     }, false);
-});
+}
 
 function draw(prevX, prevY, currX, currY) {
 
@@ -107,16 +106,27 @@ function findxy(res, e) {
 
 
 function connect() {
-    var socket = new SockJS('/points');
+
+    var socket = new SockJS('/ws');
     stompClient = Stomp.over(socket);
-    stompClient.connect({}, function (frame) {
 
+    var urlParams = new URLSearchParams(window.location.search);
+    chatRoomId = urlParams.get('room');
+
+    stompClient.connect({'chatRoomId': chatRoomId}, function (frame) {
         console.log('Connected: ' + frame);
-        stompClient.subscribe('/topic/points.test', function (points) {
-
-            var obj = JSON.parse(points.body);
-
-            obj.points.forEach(drawPoint);
+        stompClient.subscribe('/topic/' + chatRoomId + '.public.messages', function test(points) {
+            var jsonValue = JSON.parse(points.body);
+            jsonValue.points.forEach(drawPoint);
         });
-    });
+    }, function () {})
+};
+
+
+
+function sendData() {
+
+    var payload = JSON.stringify({chatRoomId : chatRoomId, points: currPoints});
+    stompClient.send("/app/points", {}, payload);
+    currPoints = [];
 };
